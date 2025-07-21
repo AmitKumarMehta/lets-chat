@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899881502418",
+    "project_id": "lets-chat-44e27",
+    "storage_bucket": "lets-chat-44e27.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899881502418:android:167d2f85ed1f7ae2b90f0b",
+        "android_client_info": {
+          "package_name": "com.example.lets_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvSzlGJjV0ElV5Sx1tjQ18lJSavtkkL_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

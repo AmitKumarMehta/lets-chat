@@ -23,11 +23,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final gradientProvider = Provider.of<GradientProvider>(context); 
+    final gradientProvider = Provider.of<GradientProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: gradientProvider.isSwitched ? Color.fromARGB(255, 234, 179, 131): Color(0xFF87CEEB),
+        backgroundColor:
+            gradientProvider.isSwitched
+                ? Color(0xFF5DE0E6)
+                : Color(0xFF87CEEB),
 
         leading: Icon(Icons.home, size: 28),
 
@@ -63,9 +66,11 @@ class _HomeState extends State<Home> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-
         decoration: BoxDecoration(
-          gradient: gradientProvider.isSwitched?gradientProvider.gradient2:gradientProvider.gradient1,
+          gradient:
+              gradientProvider.isSwitched
+                  ? gradientProvider.gradient2
+                  : gradientProvider.gradient1,
           // gradient: LinearGradient(
           //   colors: [Color(0xFF87CEEB), Color(0xFF98FF98)], // Orange gradients
           //   begin: Alignment.topCenter,
@@ -81,43 +86,59 @@ class _HomeState extends State<Home> {
                     .where((doc) => doc['uid'] != currentUser!.uid)
                     .toList();
 
-            return ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
-                return ListTile(
-                  title: Text(
-                    user['name'],
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    user['email'],
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            return Container(
+              margin: EdgeInsets.only(top: 20),
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  final user = users[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                    color:
+                        gradientProvider.isSwitched
+                            ? Color(0xFF5DE0E6)
+                            : Color(0xFF87CEEB),
+                    elevation: 5,
 
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => ChatPage(
-                              receiverId: user['uid'],
-                              receiverEmail: user['email'],
-                              receiverName: user['name'],
-                            ),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black, width: 1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        user['name'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    );
-                  },
-                );
-              },
+                      subtitle: Text(
+                        user['email'],
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => ChatPage(
+                                  receiverId: user['uid'],
+                                  receiverEmail: user['email'],
+                                  receiverName: user['name'],
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),

@@ -38,7 +38,7 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: gradientProvider.isSwitched
-            ? const Color.fromARGB(255, 234, 179, 131)
+            ? Color(0xFF5DE0E6)
             : const Color(0xFF87CEEB),
         title: const Text(
           'Profile',

@@ -84,9 +84,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         backgroundColor:
-            gradientProvider.isSwitched
-                ? Color.fromARGB(255, 234, 179, 131)
-                : Color(0xFF87CEEB),
+            gradientProvider.isSwitched ? Color(0xFF5DE0E6) : Color(0xFF87CEEB),
       ),
       body: Container(
         height: double.infinity,
@@ -129,7 +127,10 @@ class _ChatPageState extends State<ChatPage> {
                             color: isMe ? Colors.blue[300] : Colors.green[300],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(msg['text']),
+                          child: Text(
+                            msg['text'],
+                            style: TextStyle(fontSize: 20),
+                          ),
                         ),
                       );
                     },
@@ -148,22 +149,47 @@ class _ChatPageState extends State<ChatPage> {
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 242, 10, 10),
+                            color: Color.fromARGB(255, 242, 10, 10),
+                            width: 2.5,
                           ),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 2),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                            width: 2.5,
+                          ),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        prefixIcon: Icon(Icons.message_rounded, size: 23),
+                        prefixIcon: Icon(
+                          Icons.message_rounded,
+                          size: 23,
+                          color:
+                              gradientProvider.isSwitched
+                                  ? Color.fromARGB(255, 7, 237, 237)
+                                  : const Color.fromARGB(255, 0, 0, 0),
+                        ),
                         hintText: 'Enter Message',
+                        hintStyle: TextStyle(
+                          fontSize: 18,
+                          color:
+                              gradientProvider.isSwitched
+                                  ? Color.fromARGB(255, 7, 237, 237)
+                                  : const Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                   ),
                   IconButton(
                     onPressed: sendMessage,
-                    icon: Icon(Icons.send_rounded, size: 30),
+                    icon: Icon(
+                      Icons.send_rounded,
+                      size: 35,
+                      color:
+                          gradientProvider.isSwitched
+                              ? const Color.fromARGB(255, 7, 237, 237)
+                              : Color.fromARGB(255, 6, 124, 67),
+                    ),
                   ),
                 ],
               ),

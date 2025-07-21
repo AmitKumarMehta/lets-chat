@@ -11,8 +11,8 @@ class GradientProvider extends ChangeNotifier {
 
     final Gradient gradient2 =  LinearGradient(
     colors: [
-      Color.fromARGB(255, 234, 179, 131),
-      Color(0xFF87CEEB),
+      Color(0xFF5DE0E6),
+      Color(0xFF004AAD),
     ], // Orange gradients
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

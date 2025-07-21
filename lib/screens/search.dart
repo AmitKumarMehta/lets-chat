@@ -60,7 +60,7 @@ class _SearchState extends State<Search> {
       appBar: AppBar(
         backgroundColor:
             gradientProvider.isSwitched
-                ? Color.fromARGB(255, 234, 179, 131)
+                ? Color(0xFF5DE0E6)
                 : Color(0xFF87CEEB),
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -94,7 +94,8 @@ class _SearchState extends State<Search> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      border: Border.all(width: 1),
+                      border: Border.all(width: 0
+                      ),
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.transparent,
                     ),
@@ -104,12 +105,13 @@ class _SearchState extends State<Search> {
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 242, 10, 10),
+                            width: 2.5,
+                            color:  Color.fromARGB(255, 242, 10, 10),
                           ),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 2),
+                          borderSide: BorderSide(color: Colors.blue, width: 3.5),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         hintText: 'Search user email..',

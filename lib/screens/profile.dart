@@ -25,10 +25,14 @@ class _ProfileState extends State<Profile> {
 
   void signOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const Authpage()),
+      (route) => false,
     );
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const Authpage()),
+    // );
   }
 
   @override
@@ -81,7 +85,7 @@ class _ProfileState extends State<Profile> {
                   Text(
                     'Name: ${userData['name']}',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -89,7 +93,7 @@ class _ProfileState extends State<Profile> {
                   Text(
                     'Email: ${userData['email']}',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -99,11 +103,12 @@ class _ProfileState extends State<Profile> {
                       const Text(
                         'Change Colors: ',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       CupertinoSwitch(
+                        activeColor: gradientProvider.isSwitched ? Color(0xFF5DE0E6): Color(0xFF87CEEB),
                         value: gradientProvider.isSwitched,
                         onChanged: (value) {
                           gradientProvider.toggleSwitch(value);

@@ -23,16 +23,94 @@ class _ProfileState extends State<Profile> {
         .get();
   }
 
+  Future<void> _confirmAndDeleteAccount(BuildContext context) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirm Deletion'),
+            content: const Text(
+              'Are you sure you want to delete this account?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                onPressed: () {
+                  Navigator.of(
+                    context,
+                  ).pop(true); // return true to outer function
+                },
+                child: const Text('Yes, Delete'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm == true) {
+      await deleteAcc();
+    }
+  }
+
+  Future<void> deleteAcc() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No user is currently signed in.')),
+      );
+      return;
+    }
+
+    try {
+      // Step 1: Delete user document from Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .delete();
+
+      // Step 2: Delete Firebase Auth account
+      await user.delete();
+
+      // Step 3: Navigate to login page and clear navigation stack
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const Authpage()),
+        (route) => false,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account deleted successfully.')),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please re-login and try again to delete your account.',
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Auth error: ${e.message}')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
   void signOut() async {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const Authpage()),
       (route) => false,
     );
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const Authpage()),
-    // );
   }
 
   @override
@@ -41,9 +119,10 @@ class _ProfileState extends State<Profile> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: gradientProvider.isSwitched
-            ? Color(0xFF5DE0E6)
-            : const Color(0xFF87CEEB),
+        backgroundColor:
+            gradientProvider.isSwitched
+                ? const Color(0xFF5DE0E6)
+                : const Color(0xFF87CEEB),
         title: const Text(
           'Profile',
           style: TextStyle(
@@ -108,7 +187,10 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       CupertinoSwitch(
-                        activeColor: gradientProvider.isSwitched ? Color(0xFF5DE0E6): Color(0xFF87CEEB),
+                        activeColor:
+                            gradientProvider.isSwitched
+                                ? const Color(0xFF5DE0E6)
+                                : const Color(0xFF87CEEB),
                         value: gradientProvider.isSwitched,
                         onChanged: (value) {
                           gradientProvider.toggleSwitch(value);
@@ -117,21 +199,44 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: signOut,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent.shade200,
-                      ),
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: signOut,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 229, 244, 23),
+                        ),
+                        child: const Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 7),
+                      ElevatedButton(
+                        onPressed: () => _confirmAndDeleteAccount(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            243,
+                            23,
+                            23,
+                          ),
+                        ),
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

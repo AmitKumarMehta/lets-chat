@@ -47,6 +47,90 @@ class _ChatPageState extends State<ChatPage> {
     messageController.clear();
   }
 
+  void _onMessageTap(DocumentSnapshot msgDoc) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Choose Action'),
+      content: const Text('Do you want to update or delete this message?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Close current dialog
+            _showUpdateDialog(msgDoc); // Show update dialog
+          },
+          child: const Text('Edit'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Close current dialog
+            _confirmDeleteMessage(msgDoc); // Confirm delete
+          },
+          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+}
+
+void _confirmDeleteMessage(DocumentSnapshot msgDoc) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Delete Message'),
+      content: const Text('Are you sure you want to delete this message?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () async {
+            await msgDoc.reference.delete();
+            Navigator.pop(context);
+          },
+          child: const Text('Delete'),
+        ),
+      ],
+    ),
+  );
+}
+
+
+  void _showUpdateDialog(DocumentSnapshot msgDoc) {
+  final TextEditingController updateController =
+      TextEditingController(text: msgDoc['text']);
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Edit Message'),
+      content: TextField(
+        controller: updateController,
+        decoration: const InputDecoration(hintText: 'Enter new message'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final newText = updateController.text.trim();
+            if (newText.isNotEmpty) {
+              await msgDoc.reference.update({'text': newText});
+              Navigator.pop(context);
+            }
+          },
+          child: const Text('Edit'),
+        ),
+      ],
+    ),
+  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     final chatId = getChatId();
@@ -117,22 +201,44 @@ class _ChatPageState extends State<ChatPage> {
                       final msg = messages[index];
                       final isMe = msg['senderId'] == currentUser.uid;
 
-                      return Container(
-                        alignment:
-                            isMe ? Alignment.centerRight : Alignment.centerLeft,
-                        padding: const EdgeInsets.all(8),
+                      return GestureDetector(
+                        onTap: () => _onMessageTap(msg),
                         child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.blue[300] : Colors.green[300],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            msg['text'],
-                            style: TextStyle(fontSize: 20),
+                          alignment:
+                              isMe
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                          padding: const EdgeInsets.all(8),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color:
+                                  isMe ? Colors.blue[300] : Colors.green[300],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              msg['text'],
+                              style: const TextStyle(fontSize: 20),
+                            ),
                           ),
                         ),
                       );
+                      // Container(
+                      //   alignment:
+                      //       isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      //   padding: const EdgeInsets.all(8),
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //       color: isMe ? Colors.blue[300] : Colors.green[300],
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     child: Text(
+                      //       msg['text'],
+                      //       style: TextStyle(fontSize: 20),
+                      //     ),
+                      //   ),
+                      // );
                     },
                   );
                 },

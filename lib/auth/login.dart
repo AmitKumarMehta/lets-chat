@@ -24,13 +24,12 @@ class _LoginState extends State<Login> {
         password: password,
       );
 
-      // Make sure this runs only after successful sign-in
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Home()),
       );
     } on FirebaseAuthException catch (e) {
-      // This is the correct way to show a snackbar
+     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -56,11 +55,7 @@ class _LoginState extends State<Login> {
             image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
-          // gradient: LinearGradient(
-          //   colors: [Color(0xFF87CEEB), Color(0xFF98FF98)],
-          //   begin: Alignment.topCenter,
-          //   end: Alignment.bottomCenter,
-          // ),
+        
         ),
         child: SingleChildScrollView(
           child: Padding(

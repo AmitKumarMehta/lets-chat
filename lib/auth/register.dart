@@ -11,13 +11,32 @@ class Register extends StatefulWidget {
   State<Register> createState() => _RegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterState extends State<Register> with TickerProviderStateMixin {
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController pwController = TextEditingController();
   TextEditingController cpwController = TextEditingController();
   bool _obscurePass1 = true;
   bool _obscurePass2 = true;
+
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.5, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+  }
 
   Future createUserWithEmail() async {
     String name = nameController.text.trim();
@@ -70,6 +89,16 @@ class _RegisterState extends State<Register> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    pwController.dispose();
+    cpwController.dispose();
+    _controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -80,12 +109,6 @@ class _RegisterState extends State<Register> {
             image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
-
-          // gradient: LinearGradient(
-          //   colors: [Color(0xFF87CEEB), Color(0xFF98FF98)],
-          //   begin: Alignment.topCenter,
-          //   end: Alignment.bottomCenter,
-          // ),
         ),
         child: SingleChildScrollView(
           child: Padding(
@@ -102,8 +125,18 @@ class _RegisterState extends State<Register> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Image.asset('assets/chat.png', width: 150, height: 150),
+
+                const SizedBox(height: 20),
+
+                SlideTransition(
+                  position: _slideAnimation,
+                  child: Image.asset(
+                    'assets/chat.png',
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
+
                 const SizedBox(height: 20),
                 const Text(
                   'Welcome to Lets Chat',

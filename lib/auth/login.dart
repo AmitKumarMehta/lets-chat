@@ -10,14 +10,52 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> with TickerProviderStateMixin {
   TextEditingController emailController = TextEditingController();
   TextEditingController pwController = TextEditingController();
-  bool _obscurePass = true;
+
+  bool _obscurePassword = true;
+
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.5, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    emailController.dispose();
+    pwController.dispose();
+    super.dispose();
+  }
 
   Future<void> signinWithEmailPassword() async {
     String email = emailController.text.trim();
     String password = pwController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Email and password cannot be empty"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -27,14 +65,14 @@ class _LoginState extends State<Login> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Home()),
+        MaterialPageRoute(builder: (context) => const Home()),
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             e.message ?? "An error occurred",
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ),
@@ -48,7 +86,7 @@ class _LoginState extends State<Login> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
@@ -56,10 +94,9 @@ class _LoginState extends State<Login> {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 180),
+            padding: const EdgeInsets.symmetric(vertical: 120),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   'Lets Chat',
@@ -69,8 +106,17 @@ class _LoginState extends State<Login> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Image.asset('assets/chat.png', width: 150, height: 150),
+                const SizedBox(height: 20),
+
+                SlideTransition(
+                  position: _slideAnimation,
+                  child: Image.asset(
+                    'assets/chat.png',
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
+
                 const SizedBox(height: 20),
                 const Text(
                   'Welcome to Lets Chat',
@@ -90,18 +136,17 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 20),
+
                 Container(
                   width: MediaQuery.sizeOf(context).width * 0.8,
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: const Color.fromARGB(255, 14, 10, 4),
-                    ),
+                    border: Border.all(width: 1, color: const Color.fromARGB(255, 14, 10, 4)),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: TextField(
                     controller: emailController,
                     decoration: InputDecoration(
+                     
                       icon: Icon(Icons.email, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Email",
@@ -109,7 +154,9 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 15),
+
+                const SizedBox(height: 20),
+
                 Container(
                   width: MediaQuery.sizeOf(context).width * 0.8,
                   decoration: BoxDecoration(
@@ -121,29 +168,31 @@ class _LoginState extends State<Login> {
                   ),
                   child: TextField(
                     controller: pwController,
-
-                    obscureText: _obscurePass,
+                    obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      icon: Icon(Icons.lock, size: 30),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _obscurePass =  !_obscurePass;
-                          });
-                        },
-                        icon: Icon(
-                          _obscurePass
-                              ? Icons.visibility
-                              : Icons.visibility_off_rounded,
-                        ),
-                      ),
+                      icon: const Icon(Icons.lock, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Password",
-                      hintStyle: TextStyle(color: Colors.black),
+                      hintStyle: const TextStyle(color: Colors.black),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 10),
+
                 Container(
                   width: MediaQuery.sizeOf(context).width * 0.8,
                   color: Colors.transparent,
@@ -162,6 +211,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 15),
 
                 Row(
@@ -177,9 +227,11 @@ class _LoginState extends State<Login> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Register()),
+                          MaterialPageRoute(
+                            builder: (context) => const Register(),
+                          ),
                         );
                       },
                       child: const Text(

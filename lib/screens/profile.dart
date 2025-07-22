@@ -66,16 +66,13 @@ class _ProfileState extends State<Profile> {
     }
 
     try {
-      // Step 1: Delete user document from Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .delete();
 
-      // Step 2: Delete Firebase Auth account
       await user.delete();
 
-      // Step 3: Navigate to login page and clear navigation stack
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const Authpage()),
         (route) => false,
@@ -205,21 +202,42 @@ class _ProfileState extends State<Profile> {
                       ElevatedButton(
                         onPressed: signOut,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 229, 244, 23),
-                        ),
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            
                           ),
+                          elevation: 10,
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            229,
+                            244,
+                            23,
+                          ),
+                        ),
+                        child:  Row(
+                          children: [
+                            Text(
+                              'Sign out',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(width: 7,),
+                            Icon(Icons.logout,size: 20,color: Colors.black,)
+                          ],
                         ),
                       ),
                       const SizedBox(width: 7),
                       ElevatedButton(
                         onPressed: () => _confirmAndDeleteAccount(context),
                         style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            
+                          ),
+                          elevation: 5,
                           backgroundColor: const Color.fromARGB(
                             255,
                             243,
@@ -227,13 +245,19 @@ class _ProfileState extends State<Profile> {
                             23,
                           ),
                         ),
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                        child: Row(
+                          children: [
+                             Text(
+                              'Delete',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(width: 7,),
+                            Icon(Icons.delete,size: 20,color: Colors.black,)
+                          ],
                         ),
                       ),
                     ],

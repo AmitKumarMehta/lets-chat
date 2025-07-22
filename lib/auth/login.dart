@@ -13,6 +13,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController pwController = TextEditingController();
+  bool _obscurePass = true;
 
   Future<void> signinWithEmailPassword() async {
     String email = emailController.text.trim();
@@ -29,7 +30,6 @@ class _LoginState extends State<Login> {
         MaterialPageRoute(builder: (context) => Home()),
       );
     } on FirebaseAuthException catch (e) {
-     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -42,8 +42,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +53,6 @@ class _LoginState extends State<Login> {
             image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
-        
         ),
         child: SingleChildScrollView(
           child: Padding(
@@ -108,6 +105,7 @@ class _LoginState extends State<Login> {
                       icon: Icon(Icons.email, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Email",
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -123,11 +121,25 @@ class _LoginState extends State<Login> {
                   ),
                   child: TextField(
                     controller: pwController,
-                    obscureText: true,
+
+                    obscureText: _obscurePass,
                     decoration: InputDecoration(
                       icon: Icon(Icons.lock, size: 30),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePass =  !_obscurePass;
+                          });
+                        },
+                        icon: Icon(
+                          _obscurePass
+                              ? Icons.visibility
+                              : Icons.visibility_off_rounded,
+                        ),
+                      ),
                       border: InputBorder.none,
                       hintText: "Enter Password",
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -145,13 +157,13 @@ class _LoginState extends State<Login> {
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 15),
-               
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -159,7 +171,7 @@ class _LoginState extends State<Login> {
                       "Don't have an account?",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -174,7 +186,7 @@ class _LoginState extends State<Login> {
                         "Sign Up Now",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

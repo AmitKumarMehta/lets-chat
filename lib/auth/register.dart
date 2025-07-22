@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:lets_chat/auth/login.dart';
 import 'package:lets_chat/screens/home.dart';
 
-
-
 class Register extends StatefulWidget {
   const Register({super.key});
 
@@ -18,6 +16,8 @@ class _RegisterState extends State<Register> {
   TextEditingController nameController = TextEditingController();
   TextEditingController pwController = TextEditingController();
   TextEditingController cpwController = TextEditingController();
+  bool _obscurePass1 = true;
+  bool _obscurePass2 = true;
 
   Future createUserWithEmail() async {
     String name = nameController.text.trim();
@@ -138,6 +138,7 @@ class _RegisterState extends State<Register> {
                       icon: Icon(Icons.person, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Name",
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -157,6 +158,7 @@ class _RegisterState extends State<Register> {
                       icon: Icon(Icons.email, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Email",
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -172,11 +174,24 @@ class _RegisterState extends State<Register> {
                   ),
                   child: TextField(
                     controller: pwController,
-                    obscureText: true,
+                    obscureText: _obscurePass2,
                     decoration: InputDecoration(
                       icon: Icon(Icons.lock, size: 30),
                       border: InputBorder.none,
                       hintText: "Enter Password",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePass2 = !_obscurePass2;
+                          });
+                        },
+                        icon: Icon(
+                          _obscurePass2
+                              ? Icons.visibility
+                              : Icons.visibility_off_rounded,
+                        ),
+                      ),
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -192,11 +207,24 @@ class _RegisterState extends State<Register> {
                   ),
                   child: TextField(
                     controller: cpwController,
-                    obscureText: true,
+                    obscureText: _obscurePass1,
                     decoration: InputDecoration(
                       icon: Icon(Icons.lock, size: 30),
                       border: InputBorder.none,
                       hintText: "Confirm Password",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePass1 = !_obscurePass1;
+                          });
+                        },
+                        icon: Icon(
+                          _obscurePass1
+                              ? Icons.visibility
+                              : Icons.visibility_off_rounded,
+                        ),
+                      ),
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -214,7 +242,7 @@ class _RegisterState extends State<Register> {
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -228,7 +256,7 @@ class _RegisterState extends State<Register> {
                       "Already have an account!",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -243,7 +271,7 @@ class _RegisterState extends State<Register> {
                         "Sign In Now",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
